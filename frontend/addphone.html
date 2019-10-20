@@ -1,0 +1,128 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+	<title>Add a Device</title>
+	<link rel="stylesheet" href="css/bootstrap.css">
+	<link rel="stylesheet" href="css/main.css">
+	<script src="js/jquery.js"></script>
+	<script src="js/address.js"></script>
+</head>
+
+<body>
+
+
+<div id="loadingBody">
+
+<p class="title">Attempting to connect<span id="loader"></span></p>
+
+</div>
+<div id="formBody" class="group">
+
+<p class="title">Connect to device: <span id="devName"></span></p><br><br>
+<label for="numbToAdd" class="inputEl">Phone Number</label>
+<br>
+<input type="number" id="numbToAdd" class="inputEl form-control"></input>
+<br>
+<label for="provider" class="inputEl">Service Provider</label>
+<br>
+<select id="provider" class="inputEl form-control">
+	<option value="att">AT&T</option>
+	<option value="tmobile">T-Mobile</option>
+	<option value="verizon">Verizon</option>
+
+</select>
+<br>
+<button class="formButton btn inputEl" onclick="sendData()">Link to Device</button>
+<br><br>
+<button class="formButton btn inputEl" onclick="cancel()">Cancel</button>
+</div>
+
+
+
+<script>
+hasLoaded = false;
+deviceName = "";
+function displayEllipse(i){
+	if(hasLoaded){
+		return 1;
+	}
+	elStr = "";
+	for(x = 0; x < i; x++){
+		elStr += ".";
+	}
+	$("#loader").text(elStr);
+	
+	i++;
+	i%=4;
+	setTimeout(function(){displayEllipse(i);}, 500);
+}
+$(document).ready(function(){
+	setTimeout(function(){displayEllipse(1);}, 500);
+	getDevInfo();
+
+});
+
+
+</script>
+
+
+
+<script>
+function getDevInfo(){
+	$.get( address, function( data ) {
+		deviceName = data;
+		$("#devName").text(data);
+		$("#loadingBody").css("display", "none");
+		$("#formBody").css("display", "block");
+		hasLoaded = true;
+	})
+
+	.fail(function() {
+		hasLoaded = true;
+		$("#loadingBody").text( "The module was not found! Please make sure you are connected to the device's network" );
+		$("#loadingBody").css("fontSize","15pt");
+	});
+}
+
+</script>
+
+
+<script>
+function sendData(){
+	$.ajax({ url: address+"add",
+         data: {
+			number:$("#numbToAdd").val(),
+			email: $("#provider").val()
+		 },
+		 type: "get",
+		 success: function(output) {
+				console.log("output:"+output);
+				if(output == "success"){
+					devices = window.localStorage.getItem("devices");
+					if(devices.length == 0){
+						window.localStorage.setItem("devices", deviceName);
+					}
+					else{
+						if(!devices.split("-").includes(deviceName)){
+							window.localStorage.setItem("devices", devices + "-" + deviceName);
+						}
+					}
+					window.location = "success.html";
+				}
+         },
+		error: function(output) {
+			window.location = "index.html";
+		}
+	});
+
+
+}
+
+function cancel(){
+	window.location = "index.html";
+}
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,155 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+	<title>Careful Comets</title>
+	<link rel="stylesheet" href="css/bootstrap.css">
+	<link rel="stylesheet" href="css/main.css">
+	<script src="js/jquery.js"></script>
+	<script src="js/address.js"></script>
+</head>
+
+<body>
+
+<p class="title">Saved Devices</p>
+<div id="deviceList" class="container-fluid">
+	
+</div>
+<br><br>
+<p class="title">Available Devices</p>
+
+<div id="availableDevs" class="container-fluid">
+	
+</div>
+
+
+<div id="footer">Connect to a device's network to add a phone number/email. 
+<button id="bottomButton" onclick="refreshList()">Refresh List</button>
+</div>
+
+
+
+<script>
+hasLoaded = false;
+function displayEllipse(i){
+	if(hasLoaded){
+		return 1;
+	}
+	elStr = "";
+	for(x = 0; x < i; x++){
+		elStr += ".";
+	}
+	$(".loaddots").each(function(){$(this).text(elStr);});
+	
+	i++;
+	i%=4;
+	setTimeout(function(){displayEllipse(i);}, 500);
+}
+
+</script>
+
+<script>
+deviceName = -1
+function getWifiDev(){
+	//deviceName = -1;
+	$.ajax({ url: address,data:{}, async:true,
+	success:function(output){
+		deviceName = output;
+		pollAvailable(output);
+	}
+	});
+		
+	console.log("dev name is: " + deviceName);
+	return deviceName;
+}
+
+</script>
+
+
+
+
+<script>
+$(document).ready(function(){
+	devices = window.localStorage.getItem("devices");
+	setTimeout(function(){displayEllipse(1);}, 500);
+	if(devices !== null){
+		splitDevs = devices.split("-");
+		for(i = 0; i < splitDevs.length; i++){
+			deviceOn = splitDevs[i];
+			$("#deviceList").append("<div class='row deviceRow' devNumb ='"+i+"'><div class='col' type='devName'>"+deviceOn+"</div><div class='col'></div><div class='col loadmsg'>Checking <span class='loaddots'></span></div></div>");
+			console.log("ran this");
+		}
+	}
+	
+	//pollAvailable();
+	getWifiDev();
+	getAvailable();
+	
+});
+
+
+function pollAvailable(wifiConnected){
+	console.log("woot woot");
+	//wifiConnected = getWifiDev();
+	
+	$(".deviceRow").each(function(){
+		if($(this).children(":first").text() == wifiConnected){
+			$(this).html("<div class='col' type='devName'>"+$(this).children(":first").text() + "</div><div class='col'></div><div class='col'><button class='btn btn-success' onclick='continueConnect()'>Add Number</button></div>");
+		
+		}
+		else{
+			$(this).html("<div class='col' type='devName'>"+$(this).children(":first").text() + "</div><div class='col'></div><div class='col'><button class='disconnectedBtn btn'>Not Connected</button></div>");
+		}
+	});
+	hasLoaded = true;
+}
+
+function getAvailable(){
+	$("#availableDevs").html("");
+	splitData = window.localStorage.getItem("devices").split("-");
+	$.ajax({ url: address,data:{}, async:true,
+	success:function(output){
+		if(!splitData.includes(output)){
+			$("#availableDevs").append("<div class='row deviceRow'><div class='col' type='devName'>"+output + "</div><div class='col'></div><div class='col'><button class='btn btn-success' onclick='continueConnect()'>New Connect</button></div></div>");
+		}
+		else{
+			$("#availableDevs").text("No new devices available to connect to.");
+		}
+	},
+	fail:function(output){
+		$("#availableDevs").text("No devices available to connect to.");
+	}
+	});
+
+}
+
+function refreshList(){
+	devices = window.localStorage.getItem("devices");
+	
+	if(devices !== null){
+		$("#deviceList").html("");
+		splitDevs = devices.split("-");
+		for(i = 0; i < splitDevs.length; i++){
+			deviceOn = splitDevs[i];
+			$("#deviceList").append("<div class='row deviceRow' devNumb ='"+i+"'><div class='col' type='devName'>"+deviceOn+"</div><div class='col'></div><div class='col loadmsg'>Checking <span class='loaddots'></span></div></div>");
+		}
+	}
+	pollAvailable(deviceName);
+	getAvailable();
+
+}
+
+
+function continueConnect(){
+	window.location = "chooseadd.html";
+}
+
+</script>
+
+
+
+
+
+
+</body>
+
+</html>
