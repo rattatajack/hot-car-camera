@@ -42,7 +42,7 @@ def takePictures():
 def websiteWatcher():
     print("running")
     import WifiGreeting
-    WifiGreeting.greetingServer.run(host='localhost', port=179)
+    WifiGreeting.greetingServer.run(host='localhost', port=80)
 
 def startNgrok():
     wifiSetup.create()

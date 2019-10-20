@@ -2,6 +2,11 @@ from flask import Flask, request
 from flask_cors import CORS
 import sendMSG
 import configparser
+import sys
+import os
+from requests import get
+from requests.exceptions import RequestException
+from contextlib import closing
 
 contactConfig = configparser.RawConfigParser()
 
@@ -37,6 +42,49 @@ def addNumber():
         contactConfig.write(configfile)
     return "success"
 
+
+def returnHTMLCode(fileName):
+    filepath = sys.path[0] + '/'+fileName
+    exists = os.path.isfile(filepath)
+    if exists:
+        # Store configuration file values
+        f = open(filepath, 'r')
+        fileConts = f.read()
+        f.close()
+        return fileConts
+    else:
+        return "<h1>404 file not found!</h1>"
+        
+
+@greetingServer.route('/index.html')
+def index():
+    return returnHTMLCode("index.html")
+
+@greetingServer.route('/css/<string:filename>')
+def show_css(filename):
+    filepath = sys.path[0] + '/css/'+filename
+    exists = os.path.isfile(filepath)
+    if exists:
+        # Store configuration file values
+        f = open(filepath, 'r')
+        fileConts = f.read()
+        f.close()
+        return fileConts
+    else:
+        return "<h1>404 file not found!</h1>"
+        
+@greetingServer.route('/js/<string:filename>')
+def show_js(filename):
+    filepath = sys.path[0] + '/js/'+filename
+    exists = os.path.isfile(filepath)
+    if exists:
+        # Store configuration file values
+        f = open(filepath, 'r')
+        fileConts = f.read()
+        f.close()
+        return fileConts
+    else:
+        return "<h1>404 file not found!</h1>"
 
 '''
 if __name__ == "__main__":

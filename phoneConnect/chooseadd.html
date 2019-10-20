@@ -1,0 +1,52 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+	<title>Choose a Type</title>
+	<link rel="stylesheet" href="css/bootstrap.css">
+	<link rel="stylesheet" href="css/main.css">
+	<script src="js/jquery.js"></script>
+</head>
+
+<body>
+
+
+<div id="loadingBody">
+
+<p class="title">Connect an Account:</p>
+
+<br><br>
+<button class="formButton btn inputEl" onclick="phone()">Add Phone</button>
+<br><br>
+<button class="formButton btn inputEl" onclick="email()">Add Email</button>
+<br><br>
+<button class="formButton btn inputEl" onclick="goBack()">Go Back</button>
+
+</div>
+
+
+
+<script>
+function goBack(){
+	window.location = "index.html";
+
+}
+function phone(){
+	window.location = "addphone.html";
+
+}
+function email(){
+	window.location = "addemail.html";
+
+}
+
+
+</script>
+
+
+
+
+
+
+</body>
+
+</html>
